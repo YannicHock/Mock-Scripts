@@ -23,10 +23,11 @@ from . import plan_space
 class Reasoner:
     """Zustandsmaschine: beobachtete Steps rein, zu sendende Nachricht raus."""
 
-    def __init__(self, space, assembly_id, rng):
+    def __init__(self, space, assembly_id, rng, initial_first_plan=False):
         self.space = space
         self.assembly_id = assembly_id
         self.rng = rng
+        self.initial_first_plan = initial_first_plan
         self.observed = []
         self.current = None
         self.finished = False
@@ -40,8 +41,11 @@ class Reasoner:
         self.total = sum(len(b["subSteps"]) for b in space.blocks)
 
     def start(self):
-        """Waehlt zufaellig einen Plan und liefert die zu sendende Nachricht."""
-        self.current = self.space.sample_matching((), self.rng)
+        """Waehlt den initialen (wenn initial_first_plan) oder zufaellig einen Plan und liefert die Nachricht."""
+        if self.initial_first_plan:
+            self.current = self.space.initial_key()
+        else:
+            self.current = self.space.sample_matching((), self.rng)
         self.plan_number = 1
         self.decision = "chosen"
         return env.plan_message(self.space.plan_json(self.current))
@@ -101,9 +105,11 @@ def build_space(plan_path):
 
 def run_mqtt(space, assembly_id, args):
     """Faehrt die Zustandsmaschine ueber MQTT, bis sie sich beendet."""
+    initial_first_plan = (args.seed == 0)
     reasoner = Reasoner(space, assembly_id,
                         random.Random(args.seed) if args.seed is not None
-                        else random.Random())
+                        else random.Random(),
+                        initial_first_plan=initial_first_plan)
     client = env.connect(args.broker_host, args.broker_port, "or-reasoner-mock")
 
     total = space.count()
@@ -148,7 +154,8 @@ def run_mqtt(space, assembly_id, args):
     print(f"[reasoner] Planraum: {total} Plaene aus {len(space.blocks)} assembleSteps,"
           f" {reasoner.total} Substeps")
     first = reasoner.start()
-    print(f"[reasoner] Plan 1 zufaellig gewaehlt: {describe_key(reasoner.current)}")
+    how = "initial" if initial_first_plan else "zufaellig"
+    print(f"[reasoner] Plan 1 {how} gewaehlt: {describe_key(reasoner.current)}")
     publish(first)
 
     try:
@@ -179,7 +186,8 @@ def main(argv=None):
     parser.add_argument("--store", choices=("index", "plans"), default="index",
                         help="Ablageform der erzeugten Plaene")
     parser.add_argument("--out-dir", type=Path, default=Path("generated"))
-    parser.add_argument("--seed", type=int, help="reproduzierbare Planauswahl")
+    parser.add_argument("--seed", type=int,
+                        help="reproduzierbare Planauswahl (0 = initialer Plan als Plan 1)")
     parser.add_argument("--emit-scenarios", type=Path, metavar="DIR",
                         help="Szenariodateien erzeugen und beenden, ohne MQTT")
     parser.add_argument("--max-store-count", type=int,

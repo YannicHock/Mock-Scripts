@@ -217,6 +217,10 @@ class PlanSpaceTest(unittest.TestCase):
     def test_count(self):
         self.assertEqual(self.space.count(), 138240)
 
+    def test_initial_key(self):
+        self.assertEqual(self.space.initial_key(),
+                         plan_space.PlanKey(order=(0, 1, 2, 3), layouts=(0, 0, 0, 0)))
+
     def test_keys_liefert_genau_count_schluessel(self):
         self.assertEqual(sum(1 for _ in self.space.keys()), 138240)
 

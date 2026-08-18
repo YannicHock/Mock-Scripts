@@ -179,6 +179,11 @@ class PlanSpace:
             n *= len(lay)
         return n
 
+    def initial_key(self):
+        """Liefert den Schluessel des initialen/originalen Plans (Reihenfolge 0..n-1, Layout 0)."""
+        n = len(self.blocks)
+        return PlanKey(order=tuple(range(n)), layouts=(0,) * n)
+
     def keys(self):
         """Iteriert alle Planschluessel. Reihenfolge ist stabil, aber unspezifiziert."""
         n = len(self.blocks)
@@ -391,7 +396,7 @@ def _last_layout_index(space, block_index):
 def build_scenarios(space, assembly_id):
     """Die sieben Szenarien aus Spec 8.2 als dicts."""
     n = len(space.blocks)
-    identity = PlanKey(order=tuple(range(n)), layouts=(0,) * n)
+    identity = space.initial_key()
     original = space.flat_ids(identity)
 
     # 02: Bloecke rueckwaerts, jeder Block im letzten Layout (Layout B ist

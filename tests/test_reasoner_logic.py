@@ -11,10 +11,11 @@ from mocks.or_reasoner_mock import Reasoner
 TEST_PLAN = Path("data/plans/test_plan_1_3.json")
 
 
-def make_reasoner(seed=1):
+def make_reasoner(seed=1, initial_first_plan=False):
     space = plan_space.PlanSpace(
         plan_space.strip_null_subjects(plan_space.load_plan(TEST_PLAN)))
-    return space, Reasoner(space, "front_bumper", random.Random(seed))
+    return space, Reasoner(space, "front_bumper", random.Random(seed),
+                           initial_first_plan=initial_first_plan)
 
 
 def plan_of(msg):
@@ -28,6 +29,12 @@ class ReasonerTest(unittest.TestCase):
         self.assertIn("plan", msg["data"])
         self.assertEqual(plan_of(msg)["assembly"], "front_bumper")
         self.assertFalse(r.finished)
+
+    def test_start_mit_initial_first_plan_waehlt_initialen_plan(self):
+        space, r = make_reasoner(initial_first_plan=True)
+        r.start()
+        self.assertEqual(r.current, space.initial_key())
+        self.assertEqual(r.current, plan_space.PlanKey(order=(0, 1, 2, 3), layouts=(0, 0, 0, 0)))
 
     def test_start_ist_mit_seed_reproduzierbar(self):
         _, a = make_reasoner(5)
