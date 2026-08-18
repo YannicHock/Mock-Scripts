@@ -1,0 +1,124 @@
+{
+  "type": "plan",
+  "assembly": "toycar_simple_output",
+  "assembleSteps": [
+	"id": "011adff1a6739978b84f022503b6aaf05fff5b5cf2c15811b6c148fe3f34e3ab",
+	"actionType": "assemble",
+	"connection": "body_19650_id",
+    "step": "1",
+    "subSteps": [
+      {
+        "id": "403e797ef472eb6814a745b750bcf47b1218c4b9a5018933d8fe89d9ee341b16",
+        "actionType": "insert",
+        "subject": "hand_Schraube__19662_id",
+        "object": "hand_Schraube__19662",
+        "step": "1"
+      },
+      {
+        "id": "c2c5f6d0ffbf8dfe2607f9adc20620ae803a60aff7a07487f3203b5856918e4d",
+        "actionType": "insert",
+        "subject": "alan_Schraube_19626_id",
+        "object": "alan_Schraube_19626",
+        "step": "2"
+      },
+      {
+        "id": "c5503ef03050274d3df2dd3a0b42cc8f6f8fb45268fcfc1b971994f6c61e08f3",
+        "actionType": "insert",
+        "subject": "hand_Schraube__19668_id",
+        "object": "hand_Schraube__19668",
+        "step": "3"
+      },
+      {
+        "id": "016d7108c4600abf5d020c9ec0047db4ce6edd15ad36cf810a37d828f78b486f",
+        "actionType": "insert",
+        "subject": "hex_Schraube_19674_id",
+        "object": "hex_Schraube_19674",
+        "step": "4"
+      },
+      {
+        "id": "fefbe550dc407bc636004fc71df66d0da2b74deef761dd32b24142c36c810a55",
+        "actionType": "insert",
+        "subject": "alan_Schraube_Round_Head_19632_id",
+        "object": "alan_Schraube_Round_Head_19632",
+        "step": "5"
+      },
+      {
+        "id": "e41d121d97506bd0b6aaa47b32e42e6698758a7976c2c5081312f8d4f0d8e323",
+        "actionType": "insert",
+        "subject": "philips_Schraube_19734_id",
+        "object": "philips_Schraube_19734",
+        "step": "6"
+      },
+      {
+        "id": "9d27115c6b140005aefa0098a9b6c8cbb49e6dd3cfc2c3a5a5c52ff8e8a19866",
+        "actionType": "insert",
+        "subject": "hand_Schraube__19656_id",
+        "object": "hand_Schraube__19656",
+        "step": "7"
+      },
+      {
+        "id": "7c2d8aa8bfae9f2a5249bcf36e19d694583626924cb50d62bd9f77f9866a5eb2",
+        "actionType": "insert",
+        "subject": "minus_Schraube_19728_id",
+        "object": "minus_Schraube_19728",
+        "step": "8"
+      },
+      {
+        "id": "00baf23bfab73c516f907c8665f37da29ac55f9db823696e5b1791f59eb63b2a",
+        "actionType": "tighten",
+        "subject": "hex_Schraube_19674_id",
+        "object": "hex_Schraube_19674",
+        "step": "9"
+      },
+      {
+        "id": "45ef751c640e76840a521af0d5ba5ae1b5eb78b3b1b6d0772db304e5d60a9fb8",
+        "actionType": "tighten",
+        "subject": "alan_Schraube_Round_Head_19632_id",
+        "object": "alan_Schraube_Round_Head_19632",
+        "step": "10"
+      },
+      {
+        "id": "af87776064df81c4ecef41d3791f850911c2ec04e2780c62a8a19e0855802d50",
+        "actionType": "tighten",
+        "subject": "hand_Schraube__19656_id",
+        "object": "hand_Schraube__19656",
+        "step": "11"
+      },
+      {
+        "id": "accc80a0a14ec141d8d51efbff4e1ecbc29c732f45cca33efaa8ef282419dd02",
+        "actionType": "tighten",
+        "subject": "minus_Schraube_19728_id",
+        "object": "minus_Schraube_19728",
+        "step": "12"
+      },
+      {
+        "id": "81da01fb7024f67ce2ed90e572f3e49033f2e2843283ea124f72d0790a62d26d",
+        "actionType": "tighten",
+        "subject": "hand_Schraube__19662_id",
+        "object": "hand_Schraube__19662",
+        "step": "13"
+      },
+      {
+        "id": "b33065fbf0e491ef816709ccc1a953bff2563f89faa9b44bc5f361ee003a7a18",
+        "actionType": "tighten",
+        "subject": "hand_Schraube__19668_id",
+        "object": "hand_Schraube__19668",
+        "step": "14"
+      },
+      {
+        "id": "10a3b69fc32c9fd6ab4e390e4c90171ddd5a86656945d3b33b75a7ba9f802b69",
+        "actionType": "tighten",
+        "subject": "alan_Schraube_19626_id",
+        "object": "alan_Schraube_19626",
+        "step": "15"
+      },
+      {
+        "id": "7bbf69ac9c6fc251bbf13c0b9e2213ffd41adb507b3b81396680d23e73f774cf",
+        "actionType": "tighten",
+        "subject": "philips_Schraube_19734_id",
+        "object": "philips_Schraube_19734",
+        "step": "16"
+      }
+    ]
+  ]
+}

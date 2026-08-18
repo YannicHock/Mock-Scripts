@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.idea/
+.remember/
+generated/
+scenarios/
+.superpowers/
+
+# Ausgabe des einfachen Konverter-Formats, nur zum Ausprobieren
+data/output/Resultat_output.json
+/docs/
+CLAUDE.md

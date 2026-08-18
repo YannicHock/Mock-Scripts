@@ -1,0 +1,634 @@
+{
+  "type": "plan",
+  "id": "front_bumper_plan_1",
+  "assembly": "front_bumper",
+  "components": [
+		{
+		  "type": "Stossecke",
+		  "aspID": "A4108804072",
+		  "Daimler": "A4108804072",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Nebelscheinwerfer",
+		  "aspID": "A0038208256",
+		  "Daimler": "A0038208256",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Scheinwerfer",
+		  "aspID": "A0005405654",
+		  "Daimler": "A0005405654",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Blinker",
+		  "aspID": "A0028202621",
+		  "Daimler": "A0028202621",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Halter",
+		  "aspID": "A4108800414",
+		  "Daimler": "A4108800414",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Halter",
+		  "aspID": "A4108851114",
+		  "Daimler": "A4108851114",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Halter",
+		  "aspID": "A4108858714",
+		  "Daimler": "A4108858714",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Halter",
+		  "aspID": "A6298854114",
+		  "Daimler": "A6298854114",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Halter",
+		  "aspID": "A4108858814",
+		  "Daimler": "A4108858814",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Verkleidung Blinker",
+		  "aspID": "A4108800147",
+		  "Daimler": "A4108800147",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Dichtung",
+		  "aspID": "A4108850098",
+		  "Daimler": "A4108850098",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Dichtschnur",
+		  "aspID": "A0019877046",
+		  "Daimler": "A0019877046",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Dichtprofil",
+		  "aspID": "A0099873251",
+		  "Daimler": "A0099873251",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "Dichtprofil",
+		  "aspID": "A0099878551",
+		  "Daimler": "A0099878551",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		}
+	],
+  "parts": [
+		{
+		  "type": "cable",
+		  "aspID": "BLINKER_KABEL",
+		  "Daimler": "BLINKER_KABEL",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006004_1",
+		  "Daimler": "N910105006004",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_1",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A0038208256_A4108858714_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A0038208256_A4108858714_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006004_2",
+		  "Daimler": "N910105006004",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_2",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A0038208256_A4108858814_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A0038208256_A4108858814_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006004_3",
+		  "Daimler": "N910105006004",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_3",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A0038208256_A4108858814_screwhole_2",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A0038208256_A4108858814_screwhole_2"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112005000_1",
+		  "Daimler": "N910112005000",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108800147_A0028202621_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108800147_A0028202621_screwhole_1"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112005000_2",
+		  "Daimler": "N910112005000",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108800147_A0028202621_screwhole_2",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108800147_A0028202621_screwhole_2"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_1",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108800147_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108800147_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_2",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108800147_screwhole_2",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108800147_screwhole_2"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_3",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108858714_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108858714_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_4",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108858814_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108858814_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_5",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108858814_screwhole_2",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108858814_screwhole_2"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_6",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108800414_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108800414_screwhole_1"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105006002_7",
+		  "Daimler": "N910105006002",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A4108851114_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A4108851114_screwhole_1"
+		},
+		{
+		  "type": "washer",
+		  "aspID": "N000000003250_1",
+		  "Daimler": "N000000003250",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screw",
+		  "aspID": "N910105008026_1",
+		  "Daimler": "N910105008026",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A6298854114_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A6298854114_screwhole_1"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_3",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A0005405654_screwhole_1",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A0005405654_screwhole_1"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_4",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A0005405654_screwhole_2",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A0005405654_screwhole_2"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_5",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A0005405654_screwhole_3",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A0005405654_screwhole_3"
+		},
+		{
+		  "type": "nut",
+		  "aspID": "N910112006001_6",
+		  "Daimler": "N910112006001",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "none"
+		},
+		{
+		  "type": "screwhole",
+		  "aspID": "A4108804072_A0005405654_screwhole_4",
+		  "montavizID": "none",
+		  "assistID": "none",
+		  "position": "POS: A4108804072_A0005405654_screwhole_4"
+		}
+	],
+  "assembleSteps": [
+    {
+      "id": "b2ff627cf43178f3eba341896fd81232461c714de361624e08d6b534f85c1921",
+      "actionType": "assemble",
+      "connection": "A4108804072_A4108851114",
+      "step": "0",
+      "subSteps": [
+        {
+          "id": "de10e5ef4ebbb4dc2d60cdafe3eaead1c395e0fb84f4db1d02caba0ba81670e1",
+          "actionType": "position",
+          "subject": "A4108804072",
+          "object": "A4108851114",
+          "step": "1",
+          "tool": "Hand"
+        },
+        {
+          "id": "d711d88c0baf60d5d5fa1371ebd1f2c613e6bc2327af9e082d701e2cb4aaa0f5",
+          "actionType": "insert",
+          "subject": "A4108804072_A4108851114_screwhole_1",
+          "object": "N910105006002_7",
+          "step": "2",
+          "tool": "Hand"
+        },
+        {
+          "id": "f6f5a61c1e31eb68c8917a9b9a21e2863dcd4003d7780af495283831950db12d",
+          "actionType": "tighten",
+          "subject": "A4108804072_A4108851114_screwhole_1",
+          "object": "N910105006002_7",
+          "step": "3",
+          "tool": "Screwdriver"
+        }
+      ]
+    },
+	{
+      "id": "71820f0f4d7e493afc59d4b08af691c2d78f760590a76c376388d32ffbcb4898",
+      "actionType": "assemble",
+      "connection": "A4108804072_A0005405654",
+      "step": "1",
+      "subSteps": [
+        {
+          "id": "c84deff453f7a0608663e10cb9341add41fc1a186ceed376b84681267d5db53b",
+          "actionType": "position",
+          "subject": "A4108804072",
+          "object": "A0005405654",
+          "step": "1",
+          "tool": "Hand"
+        },
+        {
+          "id": "74edd60349f30cb1899a6030d8348f65685c757ebac7996cc008f66e9b145ae8",
+          "actionType": "turnon",
+          "subject": "A4108804072_A0005405654_screwhole_1",
+          "object": "N910112006001_3",
+          "step": "2",
+          "tool": "Hand"
+        },
+        {
+          "id": "cf7866e9abc66ba4619eb1f69a53822ad09745350df03fbd9be5a3ba8c764714",
+          "actionType": "turnon",
+          "subject": "A4108804072_A0005405654_screwhole_2",
+          "object": "N910112006001_4",
+          "step": "3",
+          "tool": "Hand"
+        },
+        {
+          "id": "59060cc593f081a50334d6a681094518ce320d20bb0e9911df202987a3e12f4a",
+          "actionType": "turnon",
+          "subject": "A4108804072_A0005405654_screwhole_3",
+          "object": "N910112006001_5",
+          "step": "4",
+          "tool": "Hand"
+        },
+        {
+          "id": "ea6e96ce65c0b8396ef9ab34598e312954396f81d5d77d3f8d6f6e6d511f70ec",
+          "actionType": "turnon",
+          "subject": "A4108804072_A0005405654_screwhole_4",
+          "object": "N910112006001_6",
+          "step": "5",
+          "tool": "Hand"
+        },
+        {
+          "id": "3cb1ac9e3d365df888f158482d847748444697ac08848ac469792d21039c5106",
+          "actionType": "tighten",
+          "subject": "A4108804072_A0005405654_screwhole_1",
+          "object": "N910112006001_3",
+          "step": "6",
+          "tool": "Nutrunner"
+        },
+        {
+          "id": "52e0aabac3389bdd08c561c68d42f6b52753f5c4fb429c14892c6d542393fa9d",
+          "actionType": "tighten",
+          "subject": "A4108804072_A0005405654_screwhole_2",
+          "object": "N910112006001_4",
+          "step": "7",
+          "tool": "Nutrunner"
+        },
+        {
+          "id": "f89310b64d59fbf73de482c3b5f3083c3eae3755f58dfaf660fd001dd5c79bbf",
+          "actionType": "tighten",
+          "subject": "A4108804072_A0005405654_screwhole_3",
+          "object": "N910112006001_5",
+          "step": "8",
+          "tool": "Nutrunner"
+        },
+        {
+          "id": "132882cf943806fd5295a917351bb988276c944f390977beb4f343e528fcc081",
+          "actionType": "tighten",
+          "subject": "A4108804072_A0005405654_screwhole_4",
+          "object": "N910112006001_6",
+          "step": "9",
+          "tool": "Nutrunner"
+        }
+      ]
+    },
+	{
+      "id": "0b18a0e1f987f67bdda6522a682a2d5156dcb6b3c75c939bffe9f2a4eb134cc6",
+      "actionType": "assemble",
+      "connection": "A0038208256_A4108858714",
+      "step": "2",
+      "subSteps": [
+        {
+          "id": "56bfba6811d059cd47028722f5dc9a043965373832c9587a3c09122cd3dcd62e",
+          "actionType": "position",
+          "subject": "A0038208256",
+          "object": "A4108858714",
+          "step": "1",
+          "tool": "Hand"
+        },
+        {
+          "id": "b8face48a759cb401986b4abe663d75850782b03663b5c4f0f1bcf169e21ef79",
+          "actionType": "insert",
+          "subject": "A0038208256_A4108858714_screwhole_1",
+          "object": "N910105006004_1",
+          "step": "2",
+          "tool": "Hand"
+        },
+        {
+          "id": "7b78a8d145d93ff3b433b793603a5d75707276a600a3b2d5f19ef8a0ecde215a",
+          "actionType": "turnon",
+          "subject": "A0038208256_A4108858714_screwhole_1",
+          "object": "N910112006001_1",
+          "step": "3",
+          "tool": "Hand"
+        },
+        {
+          "id": "1dd103aaf42b58f20c8ad8515d7ad3937f50d09a49d5df873741bd92558db5a1",
+          "actionType": "tighten",
+          "subject": "A0038208256_A4108858714_screwhole_1",
+          "object": "N910112006001_1",
+          "step": "4",
+          "tool": "Nutrunner"
+        }
+      ]
+    },
+	{
+      "id": "c95f54682a8e0d31617e2256baf750c733373a1072bc4dff5d0d4f3c69f8a516",
+      "actionType": "assemble",
+      "connection": "A0038208256_A4108858814",
+      "step": "3",
+      "subSteps": [
+        {
+          "id": "c1cd58ec1022c6f9e48126c2abe3bc6acdaf4dd2193f7ccbc77a904eb840fc7d",
+          "actionType": "position",
+          "subject": "A0038208256",
+          "object": "A4108858814",
+          "step": "1",
+          "tool": "Hand"
+        },
+        {
+          "id": "c247185f3e842c3f5cfa4e2ade636d30da7b13c844f56dfeb70afa0195704c11",
+          "actionType": "insert",
+          "subject": "A0038208256_A4108858814_screwhole_1",
+          "object": "N910105006004_2",
+          "step": "2",
+          "tool": "Hand"
+        },
+        {
+          "id": "c5c347f83755477a437e08b38f50349a3d20c9f12878c76465aecb4faac137f5",
+          "actionType": "turnon",
+          "subject": "A0038208256_A4108858814_screwhole_1",
+          "object": "N910112006001_2",
+          "step": "3",
+          "tool": "Hand"
+        },
+        {
+          "id": "573118701036453809e0746d4b428df82c186f13719e24e53cc1500b2b7bf968",
+          "actionType": "insert",
+          "subject": "A0038208256_A4108858814_screwhole_2",
+          "object": "N910105006004_3",
+          "step": "4",
+          "tool": "Hand"
+        },
+        {
+          "id": "7b8ff69891adede6c66ea3f90e9bd9eb6a3f64908888f6336db0eb998e6e67cb",
+          "actionType": "turnon",
+          "subject": "A0038208256_A4108858814_screwhole_2",
+          "object": "N910112006001_3",
+          "step": "5",
+          "tool": "Hand"
+        },
+        {
+          "id": "4a6c179184c3885c4fa8f686ed34e90552e13d6145e8f8ee7591d50962b39ecd",
+          "actionType": "tighten",
+          "subject": "A0038208256_A4108858814_screwhole_1",
+          "object": "N910112006001_2",
+          "step": "6",
+          "tool": "Nutrunner"
+        },
+        {
+          "id": "404b512e03738a6980fa6ee3ba887f421c04d0d7e6491f691713adf7e5ff9b07",
+          "actionType": "tighten",
+          "subject": "A0038208256_A4108858814_screwhole_2",
+          "object": "N910112006001_3",
+          "step": "7",
+          "tool": "Nutrunner"
+        }
+      ]
+    }
+  ]
+}
