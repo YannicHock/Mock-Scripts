@@ -248,10 +248,18 @@ class PlanSpace:
         DIESEN Planraum passt. Ohne die Pruefung baut `plan_json` aus einer
         vertippten id klaglos einen Unplan - `o0-0-0-0` etwa wiederholt
         denselben Block viermal - oder verreckt tief drin an einem IndexError.
-        Zu bedenken: Layoutnummern gelten nur relativ zum Eingabeplan. Eine id
-        aus dem Log eines aelteren Plans kann hier durchgehen und trotzdem
-        einen anderen Ablauf meinen.
+        Geprueft wird auch der Stamm: eine id aus dem Lauf einer anderen
+        Baugruppe faellt damit auf. Was NICHT auffaellt: dieselbe Baugruppe,
+        aber ein aelterer Eingabeplan. Layoutnummern gelten nur relativ zur
+        Aufzaehlung in `layouts_for()`, und die verschiebt sich, sobald der
+        Plan einen Substep gewinnt oder verliert - so eine id kann hier
+        durchgehen und trotzdem einen anderen Ablauf meinen.
         """
+        expected = f"{self.id_stem}_plan_o"
+        if not plan_identifier.startswith(expected):
+            raise ValueError(
+                f"Plan-id {plan_identifier!r} gehoert nicht zu diesem "
+                f"Planraum - erwartet war ein Stamm {self.id_stem!r}")
         key = parse_plan_id(plan_identifier)
         n = len(self.blocks)
         if sorted(key.order) != list(range(n)):

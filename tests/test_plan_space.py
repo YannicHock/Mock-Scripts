@@ -1,5 +1,6 @@
 """Tests fuer plan_space."""
 
+import itertools
 import json
 import random
 import tempfile
@@ -295,7 +296,15 @@ class PlanIdTest(unittest.TestCase):
     def test_key_from_id_ist_die_umkehrung(self):
         # Die Umkehrbarkeit schliesst die Eindeutigkeit mit ein: zwei Plaene
         # mit derselben id koennten nicht beide auf ihren Schluessel zurueck.
-        for _, key in zip(range(500), self.space.keys()):
+        #
+        # Mit Schrittweite, nicht als Praefix: keys() permutiert die
+        # Blockreihenfolge ganz aussen, die ersten 500 Schluessel haetten also
+        # alle order=(0,1,2,3) - und damit ausgerechnet die Achse nicht
+        # abgedeckt, auf der man sich hier vertun kann.
+        keys = list(itertools.islice(self.space.keys(), 0, None, 277))[:500]
+        self.assertGreater(len({k.order for k in keys}), 1)
+        self.assertGreater(max(max(k.layouts) for k in keys), 99)
+        for key in keys:
             self.assertEqual(self.space.key_from_id(self.space.plan_id(key)), key)
 
     def test_parse_plan_id_meckert_bei_fremdem_schema(self):
@@ -318,6 +327,14 @@ class PlanIdTest(unittest.TestCase):
         with self.assertRaises(ValueError) as fall:
             self.space.key_from_id("front_bumper_plan_o2-0-3-1_l0-5-0-2")
         self.assertIn("nur 1 Layouts", str(fall.exception))
+
+    def test_key_from_id_meckert_bei_fremdem_stamm(self):
+        # Eine id aus dem Lauf einer anderen Baugruppe: der Schluessel waere
+        # formal und strukturell in Ordnung, meint dort aber einen anderen
+        # Ablauf.
+        with self.assertRaises(ValueError) as fall:
+            self.space.key_from_id("door_hinge_plan_o2-0-3-1_l0-0-7-483")
+        self.assertIn("nicht zu diesem", str(fall.exception))
 
     def test_key_from_id_meckert_bei_falscher_blockzahl(self):
         with self.assertRaises(ValueError):
