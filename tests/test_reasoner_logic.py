@@ -55,6 +55,31 @@ class ReasonerTest(unittest.TestCase):
         self.assertEqual(msg["data"]["observed"], list(sequence))
         self.assertTrue(r.finished)
 
+    def test_gesendeter_plan_traegt_die_id_seines_schluessels(self):
+        _, r = make_reasoner(initial_first_plan=True)
+        msg = r.start()
+        self.assertEqual(plan_of(msg)["id"], "front_bumper_plan_o0-1-2-3_l0-0-0-0")
+        self.assertEqual(plan_space.key_from_id(plan_of(msg)["id"]), r.current)
+
+    def test_plan_id_bleibt_stehen_solange_der_plan_passt(self):
+        space, r = make_reasoner(initial_first_plan=True)
+        first_id = plan_of(r.start())["id"]
+        sequence = space.flat_ids(space.initial_key())
+        for action_id in sequence[:-1]:
+            msg = r.on_action(action_id)
+            self.assertEqual(r.decision, "kept")
+            self.assertEqual(plan_of(msg)["id"], first_id)
+
+    def test_plan_id_wechselt_beim_planwechsel(self):
+        space, r = make_reasoner(initial_first_plan=True)
+        first_id = plan_of(r.start())["id"]
+        # Erster Step aus dem letzten Block: der initiale Plan passt nicht mehr.
+        msg = r.on_action(space.blocks[3]["subSteps"][0]["id"])
+        self.assertEqual(r.decision, "switched")
+        second_id = plan_of(msg)["id"]
+        self.assertNotEqual(second_id, first_id)
+        self.assertEqual(plan_space.key_from_id(second_id), r.current)
+
     def test_gleicher_plan_wird_erneut_gesendet_solange_er_passt(self):
         space, r = make_reasoner()
         r.start()
@@ -111,10 +136,6 @@ class ReasonerTest(unittest.TestCase):
             r.on_action("egal")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class DecisionTest(unittest.TestCase):
     """Die Zustandsmaschine legt ihre Entscheidung offen, statt sie nur zu tun.
 
@@ -165,3 +186,7 @@ class DecisionTest(unittest.TestCase):
 
     def test_total_ist_die_zahl_der_substeps(self):
         self.assertEqual(self.reasoner.total, 23)
+
+
+if __name__ == "__main__":
+    unittest.main()

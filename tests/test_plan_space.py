@@ -262,6 +262,45 @@ class PlanSpaceTest(unittest.TestCase):
         self.assertEqual(len(plan["parts"]), 39)
 
 
+class PlanIdTest(unittest.TestCase):
+    """Das id-Schema <stem>_plan_o<Reihenfolge>_l<Layouts>."""
+
+    def setUp(self):
+        self.space = plan_space.PlanSpace(
+            plan_space.strip_null_subjects(plan_space.load_plan(TEST_PLAN)))
+
+    def test_schema(self):
+        key = plan_space.PlanKey(order=(2, 0, 3, 1), layouts=(0, 5, 0, 2))
+        self.assertEqual(plan_space.format_plan_id("front_bumper", key),
+                         "front_bumper_plan_o2-0-3-1_l0-5-0-2")
+
+    def test_stamm_kommt_aus_assembly(self):
+        self.assertEqual(self.space.id_stem, "front_bumper")
+        self.assertEqual(plan_space.plan_id_stem({"assembly": "x"}), "x")
+        self.assertEqual(plan_space.plan_id_stem({}), "plan")
+
+    def test_id_kommt_aus_dem_schluessel_statt_aus_dem_eingabeplan(self):
+        raw = plan_space.load_plan(TEST_PLAN)
+        self.assertEqual(raw["id"], "front_bumper_plan_1")
+        self.assertEqual(self.space.plan_json(self.space.initial_key())["id"],
+                         "front_bumper_plan_o0-1-2-3_l0-0-0-0")
+        key = plan_space.PlanKey(order=(3, 2, 1, 0), layouts=(0, 0, 0, 0))
+        self.assertEqual(self.space.plan_json(key)["id"],
+                         "front_bumper_plan_o3-2-1-0_l0-0-0-0")
+
+    def test_key_from_id_ist_die_umkehrung(self):
+        # Die Umkehrbarkeit schliesst die Eindeutigkeit mit ein: zwei Plaene
+        # mit derselben id koennten nicht beide auf ihren Schluessel zurueck.
+        for _, key in zip(range(500), self.space.keys()):
+            self.assertEqual(plan_space.key_from_id(self.space.plan_id(key)), key)
+
+    def test_key_from_id_meckert_bei_fremdem_schema(self):
+        with self.assertRaises(ValueError):
+            plan_space.key_from_id("front_bumper_plan_1")
+        with self.assertRaises(ValueError):
+            plan_space.key_from_id("front_bumper_plan_o0-1_l0-0-0")
+
+
 class MatchingTest(unittest.TestCase):
     def setUp(self):
         self.space = plan_space.PlanSpace(

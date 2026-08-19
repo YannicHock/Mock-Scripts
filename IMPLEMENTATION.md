@@ -74,7 +74,50 @@ auf einmal weg. Gemessen: 24 Präfixlängen in 0,031 s.
 `sample_matching` zieht **gleichverteilt** aus der Treffermenge, ohne sie zu
 materialisieren — es gewichtet Zweige nach ihrer Trefferzahl und steigt dann ab.
 
-### 1.4 Dateien
+### 1.4 Die `id` des gesendeten Plans
+
+Der Eingabeplan trägt eine feste `id` (`front_bumper_plan_1`). Würde sie
+unverändert mitgesendet, hießen alle 138 240 Pläne gleich — auf der Client-Seite
+wäre ein Planwechsel an der Nachricht nicht zu erkennen. Deshalb bildet
+`plan_json(key)` die `id` **aus dem Planschlüssel**:
+
+```
+front_bumper_plan_o2-0-3-1_l0-5-0-2
+└────┬─────┘       └──┬──┘  └──┬──┘
+  Stamm (= assembly)  │        │
+                      │        └─ Layout-Nummer je Block, in derselben
+                      │           Reihenfolge wie o (nicht in der des
+                      │           Originalplans)
+                      └─ Reihenfolge der assembleStep-Blöcke
+                         (Index im Originalplan)
+```
+
+Der Stamm ist `assembly` — dasselbe Feld, über das der Client den Plan ohnehin
+adressiert (`assemblyID`).
+
+Drei Eigenschaften, auf die es ankommt:
+
+- **Sie wechselt genau dann, wenn der Plan wechselt.** Sie hängt am Schlüssel,
+  nicht am Eingabeplan.
+- **Sie ist deterministisch.** Derselbe Plan trägt in jedem Lauf und auf jeder
+  Maschine dieselbe `id`, unabhängig von `--seed` und davon, als wievielter Plan
+  er gesendet wurde.
+- **Sie ist umkehrbar.** `plan_space.key_from_id(id)` liefert den Schlüssel
+  zurück, `plan_json` daraus wieder den exakten Plan — eine `id` aus einem Log
+  genügt, um den Plan zu rekonstruieren.
+
+Der initiale Plan heißt damit immer `front_bumper_plan_o0-1-2-3_l0-0-0-0`.
+
+Beide Mocks loggen die `id`: der Reasoner bei Wahl und Wechsel, der Client jedes
+Mal, wenn sich die empfangene `id` ändert. Sie ersetzt dort die frühere Ausgabe
+„Blöcke …, Layouts …" — sie enthält dieselben Zahlen, nur in einer Form, die auf
+beiden Seiten dieselbe ist und sich greppen lässt.
+
+**Die `id`-Felder der Steps und Substeps bleiben unberührt** — das sind
+Inhaltshashes über den ASP-Rohfakt (siehe 1.8), und der Client meldet Schritte
+über sie.
+
+### 1.5 Dateien
 
 ```
 mocks/
@@ -83,7 +126,7 @@ mocks/
   or_reasoner_mock.py     Mock 1: Zustandsmaschine + MQTT-Verdrahtung + CLI
   assembly_client_mock.py Mock 2: Replayer + MQTT-Verdrahtung + CLI
 converter/
-  resultat_to_json.py     bestehender Konverter (geändert, siehe 1.7)
+  resultat_to_json.py     bestehender Konverter (geändert, siehe 1.8)
 scripts/
   run_scenarios.py        End-to-End-Lauf aller Szenarien
 data/
@@ -107,7 +150,7 @@ etwas falsch machen kann, und braucht dafür weder Broker noch Netzwerk. Die bei
 Mocks sind dünn. Ebenso ist die Klasse `Reasoner` eine reine Zustandsmaschine ohne
 MQTT-Kenntnis — deshalb sind alle Endzustände ohne Broker getestet.
 
-### 1.5 MQTT-Kontrakt
+### 1.6 MQTT-Kontrakt
 
 | Topic | Richtung |
 |---|---|
@@ -129,11 +172,11 @@ Retain wäre die naheliegende Alternative und ist bewusst nicht gewählt: eine
 retained Plan-Nachricht überlebt den Prozess und würde den nächsten Testlauf mit
 einem Plan aus dem vorigen beginnen.
 
-### 1.6 Zustandsmaschine des Reasoners
+### 1.7 Zustandsmaschine des Reasoners
 
 | Ereignis | Reaktion |
 |---|---|
-| Start | Planraum erzeugen und ablegen, zufälligen Plan senden |
+| Start | Planraum erzeugen und ablegen, zufälligen Plan senden (bei `--seed 0` den initialen) |
 | Step passt, aktueller Plan passt noch | denselben Plan erneut senden |
 | Step passt, aktueller Plan passt nicht mehr | zufällig einen der übrigen passenden senden |
 | Kein Plan passt mehr | `noMatchingPlan` senden, beenden |
@@ -141,7 +184,7 @@ einem Plan aus dem vorigen beginnen.
 | Derselbe Step doppelt | keine Sonderbehandlung — fällt durchs Matching, endet ebenso |
 | Alle Substeps abgearbeitet | `planComplete` senden, beenden |
 
-### 1.7 Änderung am Konverter
+### 1.8 Änderung am Konverter
 
 Schraublöcher bekommen symbolische IDs statt roher Koordinaten:
 
@@ -185,7 +228,7 @@ davon anders braucht, findet hier die Stelle zum Ansetzen.
    `DFKI`/id 123 für den Reasoner, `ifak`/id 123 für den Client.
 4. **Kein Leerlauf-Timeout.** Meldet der Client nichts mehr (Szenario 07), wartet
    der Reasoner, bis er von Hand beendet wird.
-5. **Startreihenfolge Client vor Reasoner**, statt Retain zu verwenden — siehe 1.5.
+5. **Startreihenfolge Client vor Reasoner**, statt Retain zu verwenden — siehe 1.6.
 
 ### 2.2 Zur Permutation
 
@@ -298,7 +341,7 @@ uv run python scripts/run_scenarios.py --quiet    # nur die Ergebniszeilen, fuer
 
 ### 3.3 Ein Szenario von Hand fahren
 
-**Client zuerst**, sonst geht die erste Plan-Nachricht verloren (siehe 1.5).
+**Client zuerst**, sonst geht die erste Plan-Nachricht verloren (siehe 1.6).
 
 Terminal 1:
 ```powershell
@@ -338,7 +381,7 @@ hinzufügt, muss es setzen, sonst wird die Datei als Fehler gezählt.
 | `--broker-host` / `--broker-port` | `localhost` / `1883` | Broker |
 | `--store` | `index` | `index` (~5,8 MB) oder `plans` (~705 MB) |
 | `--out-dir` | `generated` | Ablageverzeichnis |
-| `--seed` | zufällig | reproduzierbare Planauswahl |
+| `--seed` | zufällig | reproduzierbare Planauswahl. `0` bedeutet zusätzlich: Plan 1 ist der initiale Plan (Blöcke in Originalreihenfolge, Layout 0) statt eines zufälligen. |
 | `--emit-scenarios DIR` | — | Szenariodateien erzeugen und beenden, ohne MQTT |
 | `--max-store-count` | `10000000` | oberhalb wird die Ablage verweigert |
 
@@ -375,7 +418,7 @@ Ergänzung dazu und braucht den Broker.
 uv run python -m mocks.or_reasoner_mock --plan pfad/zu/plan.json
 ```
 
-Der Plan muss valides JSON im Format aus 1.7 sein. Rechne vorher nach, wie groß der
+Der Plan muss valides JSON im Format aus 1.8 sein. Rechne vorher nach, wie groß der
 Raum wird — er wächst multiplikativ mit jeder Verbindung, die mehrere gleichartige
 Verbindungselemente hat:
 

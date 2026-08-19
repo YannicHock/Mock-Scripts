@@ -75,6 +75,7 @@ def run_mqtt(replayer, args):
     """
     client = env.connect(args.broker_host, args.broker_port, "assembly-client-mock")
     state = {"terminal": None}
+    last_plan_id = None
     plan_queue = queue.Queue()
 
     def on_message(_client, _userdata, msg):
@@ -91,7 +92,21 @@ def run_mqtt(replayer, args):
         if "plan" not in data:
             return  # keine Plan-Nachricht, ignorieren
 
-        plan_queue.put(None)
+        # data["plan"] ist ein JSON-String (siehe mqtt_envelope.plan_message).
+        # Ist er kaputt, wird das gemeldet, aber der Lockstep laeuft weiter: die
+        # Nachricht WAR eine Plan-Nachricht, und der Client wertet vom Plan nur
+        # die id aus - ein Abbruch hier liesse beide Seiten warten.
+        try:
+            plan = json.loads(data["plan"])
+        except (TypeError, ValueError) as exc:
+            print(f"[client] Plan-Nachricht ohne lesbares JSON: {exc}",
+                  file=sys.stderr)
+            plan = None
+        if plan is not None and not isinstance(plan, dict):
+            print(f"[client] plan-Feld ist kein Objekt, sondern "
+                  f"{type(plan).__name__}", file=sys.stderr)
+            plan = None
+        plan_queue.put(plan.get("id") if plan is not None else None)
 
     client.on_message = on_message
     client.subscribe(env.TOPIC_PLAN, qos=env.QOS)
@@ -101,9 +116,15 @@ def run_mqtt(replayer, args):
     try:
         while state["terminal"] is None:
             try:
-                plan_queue.get(timeout=0.05)
+                plan_id = plan_queue.get(timeout=0.05)
             except queue.Empty:
                 continue
+            if plan_id is not None and plan_id != last_plan_id:
+                # Wechselt die id, hat der Reasoner den Plan gewechselt - genau
+                # dafuer haengt sie am Planschluessel und nicht am Eingabeplan.
+                how = "Plan" if last_plan_id is None else "neuer Plan"
+                print(f"[client] {how} {plan_id}")
+                last_plan_id = plan_id
             if state["terminal"] is not None:
                 break  # Terminalnachricht kam, waehrend das Token in der Queue lag
 

@@ -11,6 +11,7 @@ Dieses Modul kennt kein MQTT und keine Dateien ausser dem Plan selbst.
 
 import itertools
 import json
+import re
 from collections import namedtuple
 from itertools import groupby, permutations
 from math import factorial
@@ -138,6 +139,56 @@ def _check_turnon_before_tighten(layout, connection):
 PlanKey = namedtuple("PlanKey", "order layouts")
 
 
+def plan_id_stem(plan):
+    """Der Namensteil vor `_plan_...` in der Plan-id.
+
+    Das ist `assembly` - der Client adressiert den Plan ohnehin ueber
+    `assemblyID`. Der Reasoner besteht auf dem Feld (build_space liest es
+    direkt), das "plan" hier greift also nur, wenn jemand PlanSpace ohne den
+    Mock benutzt.
+    """
+    return plan.get("assembly") or "plan"
+
+
+def format_plan_id(stem, key):
+    """Bildet die id eines Plans aus dem Planschluessel.
+
+    Schema: `<stem>_plan_o<Blockreihenfolge>_l<Layout je Block>`, also z. B.
+    `front_bumper_plan_o2-0-3-1_l0-5-0-2`. `o` ist die Reihenfolge, in der die
+    assembleStep-Bloecke abgearbeitet werden (Index im Originalplan), `l` der
+    Layout-Index je Block - in derselben Reihenfolge wie `o`, nicht in der des
+    Originalplans.
+
+    Die id ist damit deterministisch: derselbe Plan traegt in jedem Lauf und
+    auf jeder Maschine dieselbe id, und aus der id laesst sich der Plan exakt
+    rekonstruieren (siehe `key_from_id`). Sie wechselt bei jedem Planwechsel,
+    weil sie den Schluessel abbildet und nicht den Eingabeplan.
+    """
+    return (f"{stem}_plan_o" + "-".join(str(b) for b in key.order)
+            + "_l" + "-".join(str(n) for n in key.layouts))
+
+
+def key_from_id(plan_identifier):
+    """Umkehrung von `format_plan_id`: liest den Schluessel aus einer Plan-id.
+
+    Kein Laufzeitaufrufer - das ist der Weg zurueck vom Log zum Plan: eine id
+    aus einer Logzeile oder aus einer mitgeschnittenen Nachricht genuegt, um
+    mit `plan_json` genau den Plan wiederherzustellen, der gesendet wurde.
+
+    Wirft ValueError, wenn die id nicht dem Schema folgt.
+    """
+    match = re.search(r"_plan_o([0-9-]+)_l([0-9-]+)$", plan_identifier)
+    if not match:
+        raise ValueError(f"keine Plan-id nach Schema <stem>_plan_o..._l...: "
+                         f"{plan_identifier!r}")
+    order = tuple(int(x) for x in match.group(1).split("-"))
+    layouts = tuple(int(x) for x in match.group(2).split("-"))
+    if len(order) != len(layouts):
+        raise ValueError(f"Plan-id {plan_identifier!r}: {len(order)} Bloecke, "
+                         f"aber {len(layouts)} Layoutangaben")
+    return PlanKey(order=order, layouts=layouts)
+
+
 class PlanSpace:
     """Der Raum aller zulaessigen Ausfuehrungsreihenfolgen eines Plans.
 
@@ -156,6 +207,7 @@ class PlanSpace:
         geprueft (Finding 6).
         """
         self.plan = plan
+        self.id_stem = plan_id_stem(plan)
         self.blocks = plan["assembleSteps"]
         self.layouts = []
         for block in self.blocks:
@@ -178,6 +230,10 @@ class PlanSpace:
         for lay in self.layouts:
             n *= len(lay)
         return n
+
+    def plan_id(self, key):
+        """Die id, unter der der Plan zu `key` verschickt wird."""
+        return format_plan_id(self.id_stem, key)
 
     def initial_key(self):
         """Liefert den Schluessel des initialen/originalen Plans (Reihenfolge 0..n-1, Layout 0)."""
@@ -207,7 +263,10 @@ class PlanSpace:
         """Baut den vollstaendigen Plan zu einem Schluessel.
 
         step-Felder werden neu vergeben (assembleSteps ab "0", subSteps je Block
-        ab "1"); id-Felder bleiben unberuehrt, sie sind Inhaltshashes.
+        ab "1"); die id-Felder der Steps und Substeps bleiben unberuehrt, sie
+        sind Inhaltshashes. Die id des PLANS wird dagegen aus dem Schluessel
+        neu gebildet (siehe `plan_id`) - die id des Eingabeplans wird bewusst
+        verworfen, sonst truege jeder Plan des Raums dieselbe id.
         """
         steps = []
         for pos, block_index in enumerate(key.order):
@@ -217,7 +276,7 @@ class PlanSpace:
                 for i, s in enumerate(self._block_steps(block_index, key.layouts[pos]))
             ]
             steps.append({**block, "step": str(pos), "subSteps": substeps})
-        return {**self.plan, "assembleSteps": steps}
+        return {**self.plan, "id": self.plan_id(key), "assembleSteps": steps}
 
     def _free_count(self, remaining):
         """Anzahl Kombinationen, wenn die Bloecke in `remaining` voellig frei sind."""

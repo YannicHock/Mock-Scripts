@@ -92,12 +92,6 @@ class Reasoner:
                 f"(Step {len(self.observed)}: {action_id[:12]})")
 
 
-def describe_key(key):
-    """Kurzbeschreibung eines Planschluessels fuer die Logausgabe."""
-    return ("Bloecke " + "-".join(str(b) for b in key.order)
-            + ", Layouts " + "/".join(str(n) for n in key.layouts))
-
-
 def build_space(plan_path):
     plan = plan_space.strip_null_subjects(plan_space.load_plan(plan_path))
     return plan_space.PlanSpace(plan), plan["assembly"]
@@ -121,7 +115,8 @@ def run_mqtt(space, assembly_id, args):
             return f"Plan {reasoner.plan_number} passt weiter"
         if reasoner.decision == "switched":
             return (f"Plan {reasoner.plan_number - 1} passt nicht mehr"
-                    f" -> Plan {reasoner.plan_number}: {describe_key(reasoner.current)}")
+                    f" -> Plan {reasoner.plan_number}:"
+                    f" {space.plan_id(reasoner.current)}")
         if reasoner.decision == "complete":
             return f"alle {reasoner.total} Substeps gemeldet -> planComplete"
         return "kein Plan passt mehr -> noMatchingPlan"
@@ -155,7 +150,7 @@ def run_mqtt(space, assembly_id, args):
           f" {reasoner.total} Substeps")
     first = reasoner.start()
     how = "initial" if initial_first_plan else "zufaellig"
-    print(f"[reasoner] Plan 1 {how} gewaehlt: {describe_key(reasoner.current)}")
+    print(f"[reasoner] Plan 1 {how} gewaehlt: {space.plan_id(reasoner.current)}")
     publish(first)
 
     try:
@@ -187,7 +182,8 @@ def main(argv=None):
                         help="Ablageform der erzeugten Plaene")
     parser.add_argument("--out-dir", type=Path, default=Path("generated"))
     parser.add_argument("--seed", type=int,
-                        help="reproduzierbare Planauswahl (0 = initialer Plan als Plan 1)")
+                        help="reproduzierbare Planauswahl; 0 waehlt "
+                             "zusaetzlich den initialen Plan als Plan 1")
     parser.add_argument("--emit-scenarios", type=Path, metavar="DIR",
                         help="Szenariodateien erzeugen und beenden, ohne MQTT")
     parser.add_argument("--max-store-count", type=int,
