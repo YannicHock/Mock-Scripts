@@ -270,9 +270,13 @@ class PlanIdTest(unittest.TestCase):
             plan_space.strip_null_subjects(plan_space.load_plan(TEST_PLAN)))
 
     def test_schema(self):
-        key = plan_space.PlanKey(order=(2, 0, 3, 1), layouts=(0, 5, 0, 2))
+        key = plan_space.PlanKey(order=(2, 0, 3, 1), layouts=(0, 0, 7, 483))
         self.assertEqual(plan_space.format_plan_id("front_bumper", key),
-                         "front_bumper_plan_o2-0-3-1_l0-5-0-2")
+                         "front_bumper_plan_o2-0-3-1_l0-0-7-483")
+        # Der Beispielschluessel muss einer sein, den es wirklich gibt - sonst
+        # illustriert die Doku ein Missverstaendnis (Layouts gehoeren zu den
+        # Positionen in `order`, nicht zu den Bloecken des Originalplans).
+        self.assertEqual(len(self.space.plan_json(key)["assembleSteps"]), 4)
 
     def test_stamm_kommt_aus_assembly(self):
         self.assertEqual(self.space.id_stem, "front_bumper")
@@ -292,13 +296,32 @@ class PlanIdTest(unittest.TestCase):
         # Die Umkehrbarkeit schliesst die Eindeutigkeit mit ein: zwei Plaene
         # mit derselben id koennten nicht beide auf ihren Schluessel zurueck.
         for _, key in zip(range(500), self.space.keys()):
-            self.assertEqual(plan_space.key_from_id(self.space.plan_id(key)), key)
+            self.assertEqual(self.space.key_from_id(self.space.plan_id(key)), key)
 
-    def test_key_from_id_meckert_bei_fremdem_schema(self):
+    def test_parse_plan_id_meckert_bei_fremdem_schema(self):
         with self.assertRaises(ValueError):
-            plan_space.key_from_id("front_bumper_plan_1")
+            plan_space.parse_plan_id("front_bumper_plan_1")
         with self.assertRaises(ValueError):
-            plan_space.key_from_id("front_bumper_plan_o0-1_l0-0-0")
+            plan_space.parse_plan_id("front_bumper_plan_o0-1_l0-0-0")
+
+    def test_key_from_id_meckert_bei_formal_richtiger_unsinns_id(self):
+        # Formal in Ordnung, aber kein Plan: derselbe Block viermal. Ohne die
+        # Pruefung baut plan_json daraus klaglos einen Ablauf mit doppelten
+        # Substeps.
+        with self.assertRaises(ValueError) as fall:
+            self.space.key_from_id("front_bumper_plan_o0-0-0-0_l0-0-0-0")
+        self.assertIn("Permutation", str(fall.exception))
+
+    def test_key_from_id_meckert_bei_layout_ausser_reichweite(self):
+        # Block 0 hat genau ein Layout; Position 1 in dieser Reihenfolge ist
+        # Block 0, also ist Layout 5 dort nicht erreichbar.
+        with self.assertRaises(ValueError) as fall:
+            self.space.key_from_id("front_bumper_plan_o2-0-3-1_l0-5-0-2")
+        self.assertIn("nur 1 Layouts", str(fall.exception))
+
+    def test_key_from_id_meckert_bei_falscher_blockzahl(self):
+        with self.assertRaises(ValueError):
+            self.space.key_from_id("front_bumper_plan_o0-1-2_l0-0-0")
 
 
 class MatchingTest(unittest.TestCase):

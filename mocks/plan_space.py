@@ -154,26 +154,29 @@ def format_plan_id(stem, key):
     """Bildet die id eines Plans aus dem Planschluessel.
 
     Schema: `<stem>_plan_o<Blockreihenfolge>_l<Layout je Block>`, also z. B.
-    `front_bumper_plan_o2-0-3-1_l0-5-0-2`. `o` ist die Reihenfolge, in der die
+    `front_bumper_plan_o2-0-3-1_l0-0-7-483`. `o` ist die Reihenfolge, in der die
     assembleStep-Bloecke abgearbeitet werden (Index im Originalplan), `l` der
     Layout-Index je Block - in derselben Reihenfolge wie `o`, nicht in der des
     Originalplans.
 
     Die id ist damit deterministisch: derselbe Plan traegt in jedem Lauf und
     auf jeder Maschine dieselbe id, und aus der id laesst sich der Plan exakt
-    rekonstruieren (siehe `key_from_id`). Sie wechselt bei jedem Planwechsel,
-    weil sie den Schluessel abbildet und nicht den Eingabeplan.
+    rekonstruieren (siehe `PlanSpace.key_from_id`) - allerdings nur gegen
+    denselben Eingabeplan, denn Layoutnummern sind relativ zur Aufzaehlung in
+    `layouts_for()`. Sie wechselt bei jedem Planwechsel, weil sie den
+    Schluessel abbildet und nicht den Eingabeplan.
     """
     return (f"{stem}_plan_o" + "-".join(str(b) for b in key.order)
             + "_l" + "-".join(str(n) for n in key.layouts))
 
 
-def key_from_id(plan_identifier):
+def parse_plan_id(plan_identifier):
     """Umkehrung von `format_plan_id`: liest den Schluessel aus einer Plan-id.
 
-    Kein Laufzeitaufrufer - das ist der Weg zurueck vom Log zum Plan: eine id
-    aus einer Logzeile oder aus einer mitgeschnittenen Nachricht genuegt, um
-    mit `plan_json` genau den Plan wiederherzustellen, der gesendet wurde.
+    Prueft nur die FORM. Ob der Schluessel zu einem konkreten Planraum passt -
+    ob `order` eine Permutation seiner Bloecke ist und die Layoutnummern in
+    Reichweite liegen -, kann diese Funktion nicht wissen; dafuer gibt es
+    `PlanSpace.key_from_id`, und die sollte man normalerweise nehmen.
 
     Wirft ValueError, wenn die id nicht dem Schema folgt.
     """
@@ -234,6 +237,36 @@ class PlanSpace:
     def plan_id(self, key):
         """Die id, unter der der Plan zu `key` verschickt wird."""
         return format_plan_id(self.id_stem, key)
+
+    def key_from_id(self, plan_identifier):
+        """Der Weg zurueck vom Log zum Plan: id rein, Schluessel raus.
+
+        Kein Laufzeitaufrufer - gedacht fuer die Nachschau: eine id aus einer
+        Logzeile oder einer mitgeschnittenen Nachricht genuegt, um mit
+        `plan_json` genau den Plan wiederherzustellen, der gesendet wurde.
+
+        Anders als `parse_plan_id` prueft das hier auch, ob der Schluessel in
+        DIESEN Planraum passt. Ohne die Pruefung baut `plan_json` aus einer
+        vertippten id klaglos einen Unplan - `o0-0-0-0` etwa wiederholt
+        denselben Block viermal - oder verreckt tief drin an einem IndexError.
+        Zu bedenken: Layoutnummern gelten nur relativ zum Eingabeplan. Eine id
+        aus dem Log eines aelteren Plans kann hier durchgehen und trotzdem
+        einen anderen Ablauf meinen.
+        """
+        key = parse_plan_id(plan_identifier)
+        n = len(self.blocks)
+        if sorted(key.order) != list(range(n)):
+            raise ValueError(
+                f"Plan-id {plan_identifier!r}: {list(key.order)} ist keine "
+                f"Permutation der {n} Bloecke dieses Planraums")
+        for pos, block_index in enumerate(key.order):
+            available = len(self.layouts[block_index])
+            if not 0 <= key.layouts[pos] < available:
+                raise ValueError(
+                    f"Plan-id {plan_identifier!r}: Layout {key.layouts[pos]} "
+                    f"an Position {pos} (Block {block_index}), aber der Block "
+                    f"hat nur {available} Layouts")
+        return key
 
     def initial_key(self):
         """Liefert den Schluessel des initialen/originalen Plans (Reihenfolge 0..n-1, Layout 0)."""

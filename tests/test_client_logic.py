@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from mocks.assembly_client_mock import Replayer, load_scenario
+from mocks.assembly_client_mock import Replayer, load_scenario, read_plan_id
 
 
 SCENARIO = {
@@ -65,6 +65,36 @@ class ReplayerTest(unittest.TestCase):
 
     def test_assembly_id_wird_durchgereicht(self):
         self.assertEqual(Replayer(SCENARIO).assembly_id, "front_bumper")
+
+
+class ReadPlanIdTest(unittest.TestCase):
+    """Der Client liest aus einer Plan-Nachricht nur die id - und meldet, wenn
+    das nicht geht, statt still weiterzulaufen."""
+
+    def test_liest_die_id(self):
+        data = {"plan": json.dumps({"id": "front_bumper_plan_o0-1-2-3_l0-0-0-0"})}
+        self.assertEqual(read_plan_id(data),
+                         ("front_bumper_plan_o0-1-2-3_l0-0-0-0", None))
+
+    def test_meldet_kaputtes_json(self):
+        plan_id, problem = read_plan_id({"plan": "{nicht json"})
+        self.assertIsNone(plan_id)
+        self.assertIn("lesbares JSON", problem)
+
+    def test_meldet_plan_feld_das_kein_string_ist(self):
+        plan_id, problem = read_plan_id({"plan": {"id": "x"}})
+        self.assertIsNone(plan_id)
+        self.assertIn("lesbares JSON", problem)
+
+    def test_meldet_plan_der_kein_objekt_ist(self):
+        plan_id, problem = read_plan_id({"plan": "[1, 2]"})
+        self.assertIsNone(plan_id)
+        self.assertIn("kein Objekt, sondern list", problem)
+
+    def test_meldet_fehlende_id(self):
+        plan_id, problem = read_plan_id({"plan": json.dumps({"assembly": "x"})})
+        self.assertIsNone(plan_id)
+        self.assertIn("ohne id-Feld", problem)
 
 
 if __name__ == "__main__":

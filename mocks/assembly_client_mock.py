@@ -64,6 +64,31 @@ class Replayer:
         return action_id
 
 
+
+def read_plan_id(data):
+    """Die id des Plans in einer Plan-Nachricht, plus Beanstandung.
+
+    Liefert `(plan_id, problem)`. `plan_id` ist None, wenn sich keine lesen
+    laesst; `problem` ist dann ein Satz fuer stderr, sonst None.
+
+    Bewusst ohne Wurf: `data["plan"]` ist ein JSON-String (siehe
+    mqtt_envelope.plan_message), und ist der kaputt, soll das zwar auffallen -
+    aber im Lockstep darf es den Ablauf nicht anhalten. Die Nachricht WAR eine
+    Plan-Nachricht, der Client wertet vom Plan ohnehin nur die id aus, also ist
+    der naechste Step faellig. Ein Abbruch hier liesse beide Seiten warten.
+    """
+    try:
+        plan = json.loads(data.get("plan"))
+    except (TypeError, ValueError) as exc:
+        return None, f"Plan-Nachricht ohne lesbares JSON: {exc}"
+    if not isinstance(plan, dict):
+        return None, f"plan-Feld ist kein Objekt, sondern {type(plan).__name__}"
+    plan_id = plan.get("id")
+    if plan_id is None:
+        return None, "Plan ohne id-Feld"
+    return plan_id, None
+
+
 def run_mqtt(replayer, args):
     """Verbindet, spielt das Szenario im Lockstep ab und wartet auf das Terminalsignal.
 
@@ -92,21 +117,10 @@ def run_mqtt(replayer, args):
         if "plan" not in data:
             return  # keine Plan-Nachricht, ignorieren
 
-        # data["plan"] ist ein JSON-String (siehe mqtt_envelope.plan_message).
-        # Ist er kaputt, wird das gemeldet, aber der Lockstep laeuft weiter: die
-        # Nachricht WAR eine Plan-Nachricht, und der Client wertet vom Plan nur
-        # die id aus - ein Abbruch hier liesse beide Seiten warten.
-        try:
-            plan = json.loads(data["plan"])
-        except (TypeError, ValueError) as exc:
-            print(f"[client] Plan-Nachricht ohne lesbares JSON: {exc}",
-                  file=sys.stderr)
-            plan = None
-        if plan is not None and not isinstance(plan, dict):
-            print(f"[client] plan-Feld ist kein Objekt, sondern "
-                  f"{type(plan).__name__}", file=sys.stderr)
-            plan = None
-        plan_queue.put(plan.get("id") if plan is not None else None)
+        plan_id, problem = read_plan_id(data)
+        if problem is not None:
+            print(f"[client] {problem}", file=sys.stderr)
+        plan_queue.put(plan_id)
 
     client.on_message = on_message
     client.subscribe(env.TOPIC_PLAN, qos=env.QOS)

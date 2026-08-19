@@ -82,12 +82,12 @@ wäre ein Planwechsel an der Nachricht nicht zu erkennen. Deshalb bildet
 `plan_json(key)` die `id` **aus dem Planschlüssel**:
 
 ```
-front_bumper_plan_o2-0-3-1_l0-5-0-2
-└────┬─────┘       └──┬──┘  └──┬──┘
-  Stamm (= assembly)  │        │
-                      │        └─ Layout-Nummer je Block, in derselben
-                      │           Reihenfolge wie o (nicht in der des
-                      │           Originalplans)
+front_bumper_plan_o2-0-3-1_l0-0-7-483
+└────┬─────┘       └──┬──┘  └───┬───┘
+  Stamm (= assembly)  │         │
+                      │         └─ Layout-Nummer je Position, in derselben
+                      │            Reihenfolge wie o — die 7 gehört zu
+                      │            Block 3, nicht zu Block 2
                       └─ Reihenfolge der assembleStep-Blöcke
                          (Index im Originalplan)
 ```
@@ -102,9 +102,14 @@ Drei Eigenschaften, auf die es ankommt:
 - **Sie ist deterministisch.** Derselbe Plan trägt in jedem Lauf und auf jeder
   Maschine dieselbe `id`, unabhängig von `--seed` und davon, als wievielter Plan
   er gesendet wurde.
-- **Sie ist umkehrbar.** `plan_space.key_from_id(id)` liefert den Schlüssel
+- **Sie ist umkehrbar.** `PlanSpace.key_from_id(id)` liefert den Schlüssel
   zurück, `plan_json` daraus wieder den exakten Plan — eine `id` aus einem Log
-  genügt, um den Plan zu rekonstruieren.
+  genügt, um den Plan zu rekonstruieren. Die Methode prüft dabei, ob der
+  Schlüssel in *diesen* Planraum passt; die reine Formprüfung ist
+  `plan_space.parse_plan_id`. Zu beachten: Layout-Nummern sind relativ zum
+  Eingabeplan. Eine `id` aus dem Log eines älteren Plans kann formal und
+  strukturell durchgehen und trotzdem einen anderen Ablauf meinen — anders als
+  die Step-`id`s, die Inhaltshashes sind.
 
 Der initiale Plan heißt damit immer `front_bumper_plan_o0-1-2-3_l0-0-0-0`.
 
@@ -322,7 +327,7 @@ wechselt:
 ```
 Step  3 c247185f3e84   13824 von 138240 Plaene passen  Plan 3 passt weiter
 Step  6 404b512e0373    3456 von 138240 Plaene passen  Plan 3 passt nicht mehr
-                                                       -> Plan 4: Bloecke 3-1-2-0, Layouts 9/26/0/0
+                                                       -> Plan 4: front_bumper_plan_o3-1-2-0_l9-26-0-0
 ```
 
 Die Plaene sind fortlaufend nummeriert: fuer die Demo zaehlt nicht, *welcher*

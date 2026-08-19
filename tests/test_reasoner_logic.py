@@ -56,10 +56,10 @@ class ReasonerTest(unittest.TestCase):
         self.assertTrue(r.finished)
 
     def test_gesendeter_plan_traegt_die_id_seines_schluessels(self):
-        _, r = make_reasoner(initial_first_plan=True)
+        space, r = make_reasoner(initial_first_plan=True)
         msg = r.start()
         self.assertEqual(plan_of(msg)["id"], "front_bumper_plan_o0-1-2-3_l0-0-0-0")
-        self.assertEqual(plan_space.key_from_id(plan_of(msg)["id"]), r.current)
+        self.assertEqual(space.key_from_id(plan_of(msg)["id"]), r.current)
 
     def test_plan_id_bleibt_stehen_solange_der_plan_passt(self):
         space, r = make_reasoner(initial_first_plan=True)
@@ -78,7 +78,7 @@ class ReasonerTest(unittest.TestCase):
         self.assertEqual(r.decision, "switched")
         second_id = plan_of(msg)["id"]
         self.assertNotEqual(second_id, first_id)
-        self.assertEqual(plan_space.key_from_id(second_id), r.current)
+        self.assertEqual(space.key_from_id(second_id), r.current)
 
     def test_gleicher_plan_wird_erneut_gesendet_solange_er_passt(self):
         space, r = make_reasoner()
