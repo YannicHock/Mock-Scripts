@@ -68,33 +68,35 @@ class ReplayerTest(unittest.TestCase):
 
 
 class ReadPlanIdTest(unittest.TestCase):
-    """Der Client liest aus einer Plan-Nachricht nur die id - und meldet, wenn
+    """Der Client liest aus einer Plan-Nachricht nur die id - und wirft, wenn
     das nicht geht, statt still weiterzulaufen."""
 
     def test_liest_die_id(self):
-        data = {"plan": json.dumps({"id": "front_bumper_plan_o0-1-2-3_l0-0-0-0"})}
-        self.assertEqual(read_plan_id(data),
-                         ("front_bumper_plan_o0-1-2-3_l0-0-0-0", None))
+        raw = json.dumps({"id": "front_bumper_plan_o0-1-2-3_l0-0-0-0"})
+        self.assertEqual(read_plan_id(raw),
+                         "front_bumper_plan_o0-1-2-3_l0-0-0-0")
 
-    def test_meldet_kaputtes_json(self):
-        plan_id, problem = read_plan_id({"plan": "{nicht json"})
-        self.assertIsNone(plan_id)
-        self.assertIn("lesbares JSON", problem)
+    def test_wirft_bei_kaputtem_json(self):
+        with self.assertRaises(ValueError) as fall:
+            read_plan_id("{nicht json")
+        self.assertIn("lesbares JSON", str(fall.exception))
 
-    def test_meldet_plan_feld_das_kein_string_ist(self):
-        plan_id, problem = read_plan_id({"plan": {"id": "x"}})
-        self.assertIsNone(plan_id)
-        self.assertIn("lesbares JSON", problem)
+    def test_wirft_wenn_der_plan_kein_string_ist(self):
+        # json.loads wirft hier TypeError - der wird zu ValueError, damit der
+        # Aufrufer nur eine Ausnahme kennen muss.
+        with self.assertRaises(ValueError) as fall:
+            read_plan_id({"id": "x"})
+        self.assertIn("lesbares JSON", str(fall.exception))
 
-    def test_meldet_plan_der_kein_objekt_ist(self):
-        plan_id, problem = read_plan_id({"plan": "[1, 2]"})
-        self.assertIsNone(plan_id)
-        self.assertIn("kein Objekt, sondern list", problem)
+    def test_wirft_wenn_der_plan_kein_objekt_ist(self):
+        with self.assertRaises(ValueError) as fall:
+            read_plan_id("[1, 2]")
+        self.assertIn("kein Objekt, sondern list", str(fall.exception))
 
-    def test_meldet_fehlende_id(self):
-        plan_id, problem = read_plan_id({"plan": json.dumps({"assembly": "x"})})
-        self.assertIsNone(plan_id)
-        self.assertIn("ohne id-Feld", problem)
+    def test_wirft_ohne_id(self):
+        with self.assertRaises(ValueError) as fall:
+            read_plan_id(json.dumps({"assembly": "x"}))
+        self.assertIn("ohne id-Feld", str(fall.exception))
 
 
 if __name__ == "__main__":

@@ -64,29 +64,29 @@ class Replayer:
         return action_id
 
 
+def read_plan_id(raw_plan):
+    """Die id des Plans aus dem plan-Feld einer Plan-Nachricht.
 
-def read_plan_id(data):
-    """Die id des Plans in einer Plan-Nachricht, plus Beanstandung.
+    `raw_plan` ist der JSON-String, als der der Plan im Envelope steckt (siehe
+    mqtt_envelope.plan_message). Wirft ValueError, wenn sich keine id lesen
+    laesst - wie `read_data` und `load_scenario`; der Aufrufer soll eine
+    Stoerung sehen und nicht still auf None weiterlaufen.
 
-    Liefert `(plan_id, problem)`. `plan_id` ist None, wenn sich keine lesen
-    laesst; `problem` ist dann ein Satz fuer stderr, sonst None.
-
-    Bewusst ohne Wurf: `data["plan"]` ist ein JSON-String (siehe
-    mqtt_envelope.plan_message), und ist der kaputt, soll das zwar auffallen -
-    aber im Lockstep darf es den Ablauf nicht anhalten. Die Nachricht WAR eine
-    Plan-Nachricht, der Client wertet vom Plan ohnehin nur die id aus, also ist
-    der naechste Step faellig. Ein Abbruch hier liesse beide Seiten warten.
+    Der Client faengt das ab, statt sich zu beenden: die Nachricht WAR eine
+    Plan-Nachricht, er wertet vom Plan ohnehin nur die id aus, und im Lockstep
+    liesse ein Abbruch hier beide Seiten warten.
     """
     try:
-        plan = json.loads(data.get("plan"))
+        plan = json.loads(raw_plan)
     except (TypeError, ValueError) as exc:
-        return None, f"Plan-Nachricht ohne lesbares JSON: {exc}"
+        raise ValueError(f"Plan-Nachricht ohne lesbares JSON: {exc}") from exc
     if not isinstance(plan, dict):
-        return None, f"plan-Feld ist kein Objekt, sondern {type(plan).__name__}"
+        raise ValueError(f"plan-Feld ist kein Objekt, sondern "
+                         f"{type(plan).__name__}")
     plan_id = plan.get("id")
     if plan_id is None:
-        return None, "Plan ohne id-Feld"
-    return plan_id, None
+        raise ValueError("Plan ohne id-Feld")
+    return plan_id
 
 
 def run_mqtt(replayer, args):
@@ -117,9 +117,11 @@ def run_mqtt(replayer, args):
         if "plan" not in data:
             return  # keine Plan-Nachricht, ignorieren
 
-        plan_id, problem = read_plan_id(data)
-        if problem is not None:
-            print(f"[client] {problem}", file=sys.stderr)
+        try:
+            plan_id = read_plan_id(data["plan"])
+        except ValueError as exc:
+            print(f"[client] {exc}", file=sys.stderr)
+            plan_id = None
         plan_queue.put(plan_id)
 
     client.on_message = on_message

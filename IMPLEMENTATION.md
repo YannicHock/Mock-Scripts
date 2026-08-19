@@ -106,10 +106,9 @@ Drei Eigenschaften, auf die es ankommt:
   zurück, `plan_json` daraus wieder den exakten Plan — eine `id` aus einem Log
   genügt, um den Plan zu rekonstruieren. Die Methode prüft dabei, ob der
   Schlüssel in *diesen* Planraum passt; die reine Formprüfung ist
-  `plan_space.parse_plan_id`. Zu beachten: Layout-Nummern sind relativ zum
-  Eingabeplan. Eine `id` aus dem Log eines älteren Plans kann formal und
-  strukturell durchgehen und trotzdem einen anderen Ablauf meinen — anders als
-  die Step-`id`s, die Inhaltshashes sind.
+  `plan_space.parse_plan_id`. Ihr Docstring nennt die Einschränkung, auf die es
+  ankommt: Layout-Nummern gelten nur gegenüber demselben Eingabeplan — anders
+  als die Step-`id`s, die Inhaltshashes sind.
 
 Der initiale Plan heißt damit immer `front_bumper_plan_o0-1-2-3_l0-0-0-0`.
 
@@ -141,7 +140,7 @@ data/
   output/                 erzeugte Konverter-Ausgabe (Golden File)
 docker/mosquitto/         Broker
 docs/                     Spec und Implementierungsplan
-tests/                    unittest-Suite, 82 Tests
+tests/                    unittest-Suite
 generated/, scenarios/    Erzeugnisse zur Laufzeit, git-ignoriert
 ```
 
@@ -414,7 +413,7 @@ uv run python -m converter.resultat_to_json data/input/Resultat.txt \n  -n data/
 uv run python -m unittest discover -s tests -v
 ```
 
-82 Tests, rund 2,5 Sekunden, kein Broker nötig. Der End-to-End-Lauf aus 3.2 ist die
+106 Tests, rund 2,5 Sekunden, kein Broker nötig. Der End-to-End-Lauf aus 3.2 ist die
 Ergänzung dazu und braucht den Broker.
 
 ### 3.7 Einen eigenen Plan verwenden

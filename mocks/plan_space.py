@@ -160,11 +160,10 @@ def format_plan_id(stem, key):
     Originalplans.
 
     Die id ist damit deterministisch: derselbe Plan traegt in jedem Lauf und
-    auf jeder Maschine dieselbe id, und aus der id laesst sich der Plan exakt
-    rekonstruieren (siehe `PlanSpace.key_from_id`) - allerdings nur gegen
-    denselben Eingabeplan, denn Layoutnummern sind relativ zur Aufzaehlung in
-    `layouts_for()`. Sie wechselt bei jedem Planwechsel, weil sie den
-    Schluessel abbildet und nicht den Eingabeplan.
+    auf jeder Maschine dieselbe id. Sie wechselt bei jedem Planwechsel, weil
+    sie den Schluessel abbildet und nicht den Eingabeplan, und sie fuehrt
+    zurueck zum Plan - mit welchen Einschraenkungen, steht bei
+    `PlanSpace.key_from_id`.
     """
     return (f"{stem}_plan_o" + "-".join(str(b) for b in key.order)
             + "_l" + "-".join(str(n) for n in key.layouts))
